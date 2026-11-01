@@ -1,0 +1,904 @@
+<!doctype html>
+<!-- ★ 部署前请把下方 REAL_LINK.short 里的占位符换成你自己的网易云邀请短链（GitHub 网页端点文件旁的铅笔图标即可在线编辑） -->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>音乐会员免费 - 网易云音乐VIP会员领取_黑胶VIP共享_音乐免费听</title>
+<meta name="description" content="音乐会员免费分享平台，提供网易云音乐会员领取、黑胶VIP共享、音乐免费听等服务。收录最新网易云音乐黑胶会员领取链接，免费领取体验会员，无付费交易。">
+<meta name="keywords" content="网易云音乐VIP,音乐会员免费,黑胶VIP共享,网易云音乐会员领取,音乐免费听">
+<style>
+:root {
+    --red: #ff393f;
+    --red-deep: #e92730;
+    --gold: #f0b429;
+    --ink: #211617;
+    --muted: #897879;
+    --pink: #ffd5d7;
+    --cream: #fff6f4;
+    --line: rgba(81, 32, 35, .1);
+}
+* { box-sizing: border-box; }
+html { background: #ffdfe0; }
+html.dialog-open { overflow: hidden; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    overflow-x: hidden;
+    color: var(--ink);
+    font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    background:
+        radial-gradient(circle at 85% 6%, rgba(255,255,255,.75) 0 2px, transparent 3px),
+        radial-gradient(circle at 18% 24%, rgba(255,255,255,.7) 0 2px, transparent 3px),
+        linear-gradient(180deg, #ffcacc 0%, #ffe5e3 42%, #fff2ef 100%);
+}
+body.dialog-open { overflow: hidden; }
+
+/* 全屏噪点颗粒（feTurbulence 生成，opacity 0.1） */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    pointer-events: none;
+    opacity: .1;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E");
+}
+
+/* ---------- 斜纹彩带 ---------- */
+.gift-ribbon {
+    position: absolute;
+    z-index: 0;
+    overflow: hidden;
+    max-width: 100%;
+    height: 74px;
+    padding-top: 26px;
+    color: rgba(255,255,255,.24);
+    background:
+        repeating-linear-gradient(135deg, rgba(255,255,255,.08) 0 3px, transparent 3px 7px),
+        var(--red);
+    font: 800 12px/1 "Trebuchet MS", sans-serif;
+    letter-spacing: .15em;
+    white-space: nowrap;
+}
+.ribbon-left  { width: 68vw; top: 500px; left: 0;  transform: translateX(-34%) rotate(22deg); }
+.ribbon-right { width: 58vw; top: 315px; right: 0; transform: translateX(34%)  rotate(-38deg); }
+
+/* ---------- 闪烁星光 ---------- */
+.spark {
+    position: absolute;
+    z-index: 1;
+    color: #fff;
+    text-shadow: 0 0 18px #fff;
+    animation: twinkle 2.2s ease-in-out infinite;
+}
+.spark-one   { top: 275px; left: 23%;  font-size: 28px; }
+.spark-two   { top: 405px; right: 20%; font-size: 47px; animation-delay: .5s; }
+.spark-three { top: 700px; left: 13%;  font-size: 30px; animation-delay: 1s; }
+@keyframes twinkle { 50% { opacity: .25; transform: scale(.8) rotate(15deg); } }
+
+.page-shell {
+    position: relative;
+    z-index: 2;
+    width: min(980px, calc(100% - 48px));
+    margin: 0 auto;
+    padding-top: 32px;
+    padding-bottom: 72px;
+}
+
+/* ---------- 卡片区 ---------- */
+.gift-stage { position: relative; margin-top: 24px; padding-top: 150px; }
+
+.cards {
+    position: absolute;
+    z-index: 1;
+    width: min(690px, 84%);
+    height: 220px;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    cursor: default;
+    user-select: none;
+    -webkit-user-select: none;
+}
+.vip-card {
+    position: absolute;
+    overflow: hidden;
+    border-radius: 16px;
+    box-shadow: 0 24px 38px rgba(103,35,40,.2);
+}
+
+/* 金卡（背面） */
+.card-back {
+    width: 54%;
+    height: 178px;
+    top: 10px;
+    right: 3%;
+    padding: 24px;
+    color: #513a22;
+    background: linear-gradient(135deg, #fff5bf, #d7a93c);
+    transform: rotate(8deg);
+}
+.card-back::after {
+    content: "";
+    position: absolute;
+    width: 150px; height: 150px;
+    right: -26px; bottom: -56px;
+    border: 22px solid rgba(60,41,17,.24);
+    border-radius: 50%;
+}
+.card-back small, .card-back b { position: relative; z-index: 1; display: block; }
+.card-back small { font-size: 11px; letter-spacing: .12em; }
+.card-back b { margin-top: 46px; font: 900 38px/1 "Trebuchet MS", sans-serif; }
+
+/* 黑卡（正面）+ 纯 CSS 黑胶唱片 */
+.card-front {
+    display: flex;
+    align-items: center;
+    width: 67%;
+    height: 178px;
+    top: 32px;
+    left: 1%;
+    padding: 22px 28px;
+    color: #f7dddd;
+    background: linear-gradient(145deg, #292526, #080808);
+    transform: rotate(-8deg);
+}
+.card-front > * { margin-right: 24px; }
+.card-front > *:last-child { margin-right: 0; }
+.card-front::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, transparent 0 43%, rgba(255,255,255,.07) 44% 55%, transparent 56%);
+}
+.record-art {
+    position: relative;
+    flex: 0 0 auto;
+    width: 104px;
+    height: 104px;
+    border-radius: 50%;
+    background: repeating-radial-gradient(circle, #101010 0 5px, #282526 6px, #0b0b0b 8px);
+}
+.record-art i {
+    position: absolute;
+    inset: 39%;
+    border-radius: 50%;
+    background: var(--red);
+}
+.card-front div { position: relative; z-index: 1; }
+.card-front small, .card-front b, .card-front em { display: block; }
+.card-front small { font-size: 10px; letter-spacing: .12em; }
+.card-front b { margin: 6px 0; font-family: "Songti SC", serif; font-size: 34px; }
+.card-front em { color: #76696a; font: 700 8px/1 "Trebuchet MS", sans-serif; letter-spacing: .22em; }
+
+/* ---------- 信封主卡（毛玻璃高光） ---------- */
+.envelope {
+    position: relative;
+    border-radius: 28px;
+    padding: 30px 28px 26px;
+    text-align: center;
+    background: linear-gradient(180deg, #ffffff 0%, #fff4f0 100%);
+    box-shadow: 0 30px 60px rgba(137, 59, 65, .18);
+}
+.envelope::before, .envelope::after { content: ""; position: absolute; pointer-events: none; }
+.envelope::before {
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(125deg, rgba(255,255,255,.45), transparent 34%);
+}
+.envelope::after {
+    width: 130%; height: 1px;
+    left: -15%; top: 57%;
+    background: rgba(255,255,255,.7);
+    transform: rotate(-20deg);
+    opacity: .38;
+}
+.giver { display: flex; align-items: center; gap: 12px; text-align: left; }
+.giver .avatar {
+    display: grid; place-items: center;
+    width: 44px; height: 44px;
+    border-radius: 14px;
+    color: #fff;
+    background: linear-gradient(160deg, #ff7d81, var(--red));
+    font-size: 18px;
+}
+.giver strong { display: block; font-size: 15px; }
+.giver p { margin: 2px 0 0; color: var(--muted); font-size: 12px; }
+.gift-count { margin-top: 18px; }
+.gift-count span { color: var(--muted); font-size: 13px; }
+.gift-count strong {
+    display: inline-block;
+    margin: 0 10px;
+    font: 900 64px/1 "Trebuchet MS", sans-serif;
+    color: var(--ink);
+    letter-spacing: .01em;
+}
+.total-claimed { margin: 10px 0 0; color: var(--muted); font-size: 13px; }
+.total-claimed b { color: var(--red); }
+.share-actions { margin-top: 22px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.share-actions button {
+    border: 0;
+    border-radius: 999px;
+    padding: 15px 30px;
+    font-size: 15px;
+    font-weight: 800;
+    color: #fff;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+}
+.share-actions button:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(233,39,48,.35); }
+.primary-share { background: linear-gradient(180deg, #ff5257, var(--red-deep)); }
+.guide-share { background: linear-gradient(180deg, #ffd766, #f0b429); color: #513a22; }
+
+/* ---------- 列表 ---------- */
+.links {
+    margin-top: 34px;
+    background: rgba(255,255,255,.72);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 22px;
+}
+.main-tabs { display: flex; gap: 10px; flex-wrap: wrap; }
+.main-tab {
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--muted);
+    border-radius: 999px;
+    padding: 9px 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .15s;
+}
+.main-tab.active { background: var(--red); border-color: var(--red); color: #fff; }
+
+.list-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 16px 0 6px;
+}
+.list-head b { font-size: 16px; }
+.sort-tabs { display: flex; gap: 8px; }
+.sort-tab {
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--muted);
+    border-radius: 999px;
+    padding: 5px 14px;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.sort-tab.active { background: var(--gold); border-color: var(--gold); color: #513a22; }
+
+.link-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 10px;
+    border-bottom: 1px dashed var(--line);
+    animation: rise .45s both;
+}
+.link-row .rank {
+    flex: 0 0 34px;
+    display: grid; place-items: center;
+    height: 34px;
+    border-radius: 10px;
+    background: linear-gradient(180deg, #ff5257, var(--red-deep));
+    color: #fff;
+    font-weight: 900;
+}
+.link-row .who { flex: 1 1 auto; min-width: 0; }
+.link-row .who b { display: block; font-size: 14px; }
+.link-row .who span { color: var(--muted); font-size: 12px; }
+.link-row .get {
+    flex: 0 0 auto;
+    border: 0;
+    border-radius: 999px;
+    padding: 9px 20px;
+    background: linear-gradient(180deg, #ff5257, var(--red-deep));
+    color: #fff;
+    font-weight: 800;
+    cursor: pointer;
+    transition: .15s;
+}
+.link-row .get:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(233,39,48,.3); }
+.empty { padding: 34px 20px; text-align: center; color: var(--muted); line-height: 1.8; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+
+/* ---------- 弹窗（原生 dialog） ---------- */
+dialog {
+    width: min(440px, calc(100% - 32px));
+    border: 0;
+    border-radius: 24px;
+    padding: 0;
+    background: #fff;
+    box-shadow: 0 24px 70px rgba(137, 59, 65, .24);
+    overflow: hidden;
+}
+dialog::backdrop {
+    background: rgba(84, 42, 45, .5);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+}
+dialog[open] { animation: sdIn .22s ease-out; }
+@keyframes sdIn { from { opacity: 0; transform: translateY(-10px); } }
+
+.dlg-body { padding: 28px 26px 24px; text-align: center; position: relative; }
+.dlg-close {
+    position: absolute;
+    top: 14px; right: 14px;
+    display: grid; place-items: center;
+    width: 30px; height: 30px;
+    border: 0;
+    border-radius: 50%;
+    color: var(--muted);
+    background: rgba(81, 32, 35, .06);
+    cursor: pointer;
+    font-size: 14px;
+    z-index: 1;
+}
+.dlg-close:hover { color: #fff; background: var(--red); }
+.dlg-icon {
+    display: grid; place-items: center;
+    width: 52px; height: 52px;
+    margin: 0 auto 12px;
+    border-radius: 50%;
+    background: linear-gradient(160deg, #ff7d81, var(--red));
+    color: #fff;
+    font-size: 18px;
+    box-shadow: 0 10px 24px rgba(233,39,48,.35);
+}
+dialog h3 { margin: 0 0 8px; font-family: "Songti SC", serif; font-size: 19px; }
+dialog .dlg-sub { margin: 0 0 16px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+
+.link-box {
+    width: 100%;
+    border: 1px dashed rgba(81, 32, 35, .25);
+    border-radius: 12px;
+    background: #fff8f5;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--ink);
+    text-align: center;
+    word-break: break-all;
+    user-select: all;
+}
+.dlg-actions { display: flex; gap: 12px; justify-content: center; margin-top: 18px; flex-wrap: wrap; }
+.dlg-actions button {
+    border: 0;
+    border-radius: 999px;
+    padding: 11px 24px;
+    font-weight: 800;
+    font-size: 14px;
+    cursor: pointer;
+    transition: .15s;
+}
+.btn-ghost { background: #fff; color: var(--ink); border: 1.5px solid var(--ink) !important; }
+.btn-primary { background: linear-gradient(180deg, #ff5257, var(--red-deep)); color: #fff; }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 20px rgba(233,39,48,.35); }
+.btn-gold { background: linear-gradient(180deg, #ffd766, #f0b429); color: #513a22; }
+
+.rules-text { text-align: left; font-size: 13px; color: var(--ink); line-height: 1.9; margin: 0 0 6px; }
+.rules-text b { color: var(--red-deep); }
+.rules-note { text-align: left; font-size: 12px; color: var(--muted); line-height: 1.8; margin: 10px 0 0; }
+
+.share-form { text-align: left; }
+.share-form label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+.share-form textarea {
+    width: 100%;
+    min-height: 96px;
+    border: 1px solid rgba(81, 32, 35, .2);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font: inherit;
+    font-size: 13px;
+    resize: vertical;
+    outline: none;
+}
+.share-form textarea:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(255,57,63,.15); }
+.form-message { min-height: 18px; margin-top: 8px; font-size: 12.5px; color: #e5484d; }
+.form-message.ok { color: #1a9e55; }
+
+/* ---------- toast ---------- */
+.toast {
+    position: fixed;
+    left: 50%;
+    bottom: 48px;
+    transform: translateX(-50%) translateY(20px);
+    z-index: 50;
+    padding: 12px 22px;
+    border-radius: 999px;
+    background: rgba(33, 22, 23, .92);
+    color: #fff;
+    font-size: 13px;
+    opacity: 0;
+    pointer-events: none;
+    transition: .25s;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ---------- 手机端 ---------- */
+@media (max-width: 640px) {
+    .gift-stage { margin-top: 0; padding-top: 0; }
+    .cards { display: none; }
+    .ribbon-left { top: 640px; }
+    .page-shell { width: calc(100% - 24px); padding-top: 16px; }
+    .gift-count strong { font-size: 54px; }
+    .link-row .get { padding: 8px 14px; }
+}
+</style>
+</head>
+<body>
+
+<div class="gift-ribbon ribbon-left" aria-hidden="true">MUSIC VIP FREE · MUSIC VIP FREE · MUSIC VIP FREE · MUSIC VIP FREE · MUSIC VIP FREE</div>
+<div class="gift-ribbon ribbon-right" aria-hidden="true">BLACK VINYL · BLACK VINYL · BLACK VINYL · BLACK VINYL · BLACK VINYL</div>
+
+<span class="spark spark-one" aria-hidden="true">✦</span>
+<span class="spark spark-two" aria-hidden="true">✦</span>
+<span class="spark spark-three" aria-hidden="true">✦</span>
+
+<main class="page-shell">
+    <section class="gift-stage">
+        <div class="cards" aria-hidden="true">
+            <div class="vip-card card-back"><small>BLACK VINYL</small><b>SVIP</b></div>
+            <div class="vip-card card-front">
+                <span class="record-art"><i></i></span>
+                <div><small>网易云音乐</small><b>黑胶VIP</b><em>MEMBERSHIP</em></div>
+            </div>
+        </div>
+
+        <div class="envelope">
+            <div class="giver">
+                <span class="avatar">♪</span>
+                <div>
+                    <strong>音乐会员免费</strong>
+                    <p>网易云音乐会员领取链接正在分享</p>
+                </div>
+            </div>
+            <div class="gift-count"><span>当前</span><strong id="availableCount">0</strong><span>个可领取</span></div>
+            <p class="total-claimed">♥ <b id="totalUsers">0</b> 人在网站已送出 <b id="totalClaimed">0</b> 份会员</p>
+            <div class="share-actions">
+                <button class="primary-share" id="shareToggle">我也要分享</button>
+                <button class="guide-share" id="rulesToggle">规则说明</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="links">
+        <div class="main-tabs" role="tablist" aria-label="活动分类">
+            <button class="main-tab active" type="button" role="tab" data-tab="netease" aria-selected="true">网易会员</button>
+            <button class="main-tab" type="button" role="tab" data-tab="qqmusic" aria-selected="false">QQ音乐</button>
+            <button class="main-tab" type="button" role="tab" data-tab="others" aria-selected="false">其他</button>
+        </div>
+
+        <div class="list-head">
+            <b id="listTitle">网易会员领取列表</b>
+            <div class="sort-tabs">
+                <button class="sort-tab active" type="button" data-sort="new">最新</button>
+                <button class="sort-tab" type="button" data-sort="hot">最热</button>
+            </div>
+        </div>
+
+        <div id="linkList"></div>
+    </section>
+</main>
+
+<!-- 领取弹窗 -->
+<dialog id="claimDialog">
+    <button class="dlg-close" type="button" data-close="claimDialog" aria-label="关闭">✕</button>
+    <div class="dlg-body">
+        <div class="dlg-icon">♪</div>
+        <h3 id="claimTitle">领取黑胶VIP</h3>
+        <p class="dlg-sub" id="claimDesc">—</p>
+        <div class="link-box" id="claimLink">—</div>
+        <div class="dlg-actions">
+            <button class="btn-ghost" type="button" id="claimCopy">⧉ 复制链接</button>
+            <button class="btn-primary" type="button" id="claimGo">立即领取</button>
+        </div>
+    </div>
+</dialog>
+
+<!-- 规则说明弹窗 -->
+<dialog id="rulesDialog">
+    <button class="dlg-close" type="button" data-close="rulesDialog" aria-label="关闭">✕</button>
+    <div class="dlg-body">
+        <div class="dlg-icon">ℹ</div>
+        <h3>规则说明及免责声明</h3>
+        <p class="rules-text">
+            <b>1.</b> 本站所有会员领取链接均来自网友自愿分享，仅供体验，领取时长以网易云音乐官方活动为准。<br>
+            <b>2.</b> 每个账号/设备限领一次，重复领取可能被官方活动拦截，与本站无关。<br>
+            <b>3.</b> 本站不收取任何费用，无需充值、无需提交账号密码等隐私信息。<br>
+            <b>4.</b> 链接失效、被领完属于正常情况，可等待新的分享或自行投稿。
+        </p>
+        <p class="rules-note">免责声明：本站仅收录公开分享链接，不储存、不破解、不代充任何账号；如有侵权请联系删除。</p>
+        <div class="dlg-actions">
+            <button class="btn-primary" type="button" data-close="rulesDialog">我知道了</button>
+        </div>
+    </div>
+</dialog>
+
+<!-- 分享方法弹窗 -->
+<dialog id="guideDialog">
+    <button class="dlg-close" type="button" data-close="guideDialog" aria-label="关闭">✕</button>
+    <div class="dlg-body">
+        <div class="dlg-icon">✦</div>
+        <h3>分享方法</h3>
+        <p class="rules-text">
+            <b>第一步</b>：手机打开网易云音乐APP，进入「我的」页面。<br>
+            <b>第二步</b>：找到「黑胶邀请官」活动入口（给好友发会员）。<br>
+            <b>第三步</b>：复制你的专属邀请链接。<br>
+            <b>第四步</b>：回到本页，点击「我也要分享」，粘贴链接提交。
+        </p>
+        <div class="dlg-actions">
+            <button class="btn-gold" type="button" id="guideGo">去分享</button>
+        </div>
+    </div>
+</dialog>
+
+<!-- 分享表单弹窗 -->
+<dialog id="shareDialog">
+    <button class="dlg-close" type="button" data-close="shareDialog" aria-label="关闭">✕</button>
+    <div class="dlg-body share-form">
+        <h3 style="text-align:center">分享领取链接</h3>
+        <p class="dlg-sub" style="text-align:center">粘贴你的网易云音乐邀请链接，审核通过后展示在列表</p>
+        <form id="shareForm" novalidate>
+            <label for="shareContent">分享内容</label>
+            <textarea id="shareContent" placeholder="例如：https://music.163.com/invite/xxxxxx 或完整分享文案" required></textarea>
+            <div class="form-message" id="formMessage"></div>
+            <div class="dlg-actions">
+                <button class="btn-primary" type="submit">确认分享</button>
+            </div>
+        </form>
+    </div>
+</dialog>
+
+<!-- PC 引导弹窗（原站 pcDialog 同款：电脑端无法识别领取链接） -->
+<dialog id="pcDialog">
+    <button class="dlg-close" type="button" data-close="pcDialog" aria-label="关闭">✕</button>
+    <div class="dlg-body">
+        <div class="dlg-icon">♪</div>
+        <h3>请使用手机打开</h3>
+        <p class="dlg-sub">电脑端打开网易云无法识别会员领取链接，<br>请复制链接到手机浏览器打开本页面后领取。</p>
+        <div class="link-box" id="pcLink">—</div>
+        <div class="dlg-actions">
+            <button class="btn-ghost" type="button" id="pcCopy">⧉ 复制链接</button>
+            <button class="btn-primary" type="button" data-close="pcDialog">我知道了</button>
+        </div>
+    </div>
+</dialog>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ============================================================
+ * 数据层：真实站点这里是 fetch('index.php?action=list') 拉取
+ * real: true 的行走真实跳转/复制逻辑，其余为演示 mock
+ * ============================================================ */
+var REAL_LINK = {
+    short: 'https://163cn.tv/替换成你的短链',
+    jump:  ''
+};
+
+var PLATFORMS = {
+    netease: { title: '网易会员领取列表', rows: [
+        { who: '我的分享', days: '赠送黑胶VIP（官方活动）', url: REAL_LINK.short, jump: REAL_LINK.jump, ago: 3, claimed: 0, real: true },
+        { who: '用户[玄***5]', days: '赠送黑胶VIP5天',  url: 'https://music.163.com/invite/ab12cd34', ago: 9,  claimed: 0 },
+        { who: '用户[瑞***s]', days: '赠送黑胶VIP7天',  url: 'https://music.163.com/invite/ef56gh78', ago: 11, claimed: 0 },
+        { who: '用户[-***]',   days: '赠送黑胶VIP30天', url: 'https://music.163.com/invite/ij90kl12', ago: 14, claimed: 1 },
+        { who: '用户[要***]',  days: '赠送黑胶VIP5天',  url: 'https://music.163.com/invite/mn34op56', ago: 15, claimed: 0 },
+        { who: '用户[红***莓]', days: '赠送黑胶VIP30天', url: 'https://music.163.com/invite/qr78st90', ago: 17, claimed: 2 },
+        { who: '用户[k***雨]', days: '赠送黑胶VIP7天',  url: 'https://music.163.com/invite/uv12wx34', ago: 22, claimed: 5 }
+    ]},
+    qqmusic: { title: 'QQ音乐领取列表', rows: [
+        { who: '用户[青***梅]', days: '赠送QQ音乐豪华绿钻7天',  url: 'https://y.qq.com/invite/za98yx76', ago: 6,  claimed: 0 },
+        { who: '用户[竹***马]', days: '赠送QQ音乐豪华绿钻31天', url: 'https://y.qq.com/invite/wv54ut32', ago: 12, claimed: 1 },
+        { who: '用户[星***河]', days: '赠送QQ音乐付费包月卡',   url: 'https://y.qq.com/invite/sr10op54', ago: 18, claimed: 3 },
+        { who: '用户[云***端]', days: '赠送QQ音乐豪华绿钻7天',  url: 'https://y.qq.com/invite/ml98ki32', ago: 25, claimed: 0 }
+    ]},
+    others: { title: '其他平台领取列表', rows: [
+        { who: '用户[芒***果]', days: '赠送咪咕音乐白金会员月卡', url: 'https://migu.cn/invite/abc123', ago: 8,  claimed: 1 },
+        { who: '用户[酷***狗]', days: '赠送酷狗豪华VIP月卡',      url: 'https://kugou.com/invite/def456', ago: 16, claimed: 0 },
+        { who: '用户[千***千]', days: '赠送千耳VIP会员7天',       url: 'https://qianqian.com/invite/ghi789', ago: 30, claimed: 4 }
+    ]}
+};
+
+var state = { tab: 'netease', sort: 'new' };
+var counters = { available: 139, users: 9918, claimed: 38355 };
+
+/* 截图自检钩子：?tab=qqmusic / ?sort=hot / ?open=claim|rules|guide|share
+ * 自检模式下跳过动画、同步打开弹窗，保证无头截图确定性；正常访问不受影响 */
+var AUTO_PARAMS = new URLSearchParams(location.search);
+var AUTO_DEMO = !!(AUTO_PARAMS.get('tab') || AUTO_PARAMS.get('sort') || AUTO_PARAMS.get('open'));
+
+/* ============================================================
+ * 数字滚动（easeOutExpo + RAF，与原站同款算法）
+ * ============================================================ */
+function formatNumber(n) { return Math.round(n).toLocaleString('en-US'); }
+function easeOutExpo(t) { return t === 1 ? 1 : 1 - Math.pow(2, -10 * t); }
+function animateNumber(el, target) {
+    var to = Math.max(0, Math.floor(Number(target) || 0));
+    var from = Number((el.textContent || '').replace(/[^\d.-]/g, '').replace(/,/g, '')) || 0;
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || AUTO_DEMO) {
+        el.textContent = formatNumber(to);
+        return;
+    }
+    var distance = Math.abs(to - from);
+    if (distance < 3) { el.textContent = formatNumber(to); return; }
+
+    var duration = Math.min(1800, Math.max(600, 500 + Math.log10(distance + 1) * 500));
+    var start = performance.now();
+
+    // 锁定宽度，避免滚动时抖动
+    var width = el.getBoundingClientRect().width;
+    if (width > 0) {
+        el.style.minWidth = Math.ceil(width) + 'px';
+        el.style.display = 'inline-block';
+        el.style.textAlign = 'center';
+    }
+
+    (function step(now) {
+        var t = Math.min(1, (now - start) / duration);
+        el.textContent = formatNumber(from + (to - from) * easeOutExpo(t));
+        if (t < 1) requestAnimationFrame(step);
+        else el.textContent = formatNumber(to);
+    })(start);
+}
+
+/* ============================================================
+ * 列表渲染：按 Tab 数据源 + 最新/最热排序，逐条 rise 入场
+ * ============================================================ */
+function renderList() {
+    var platform = PLATFORMS[state.tab];
+    document.getElementById('listTitle').textContent = platform.title;
+
+    var rows = platform.rows.slice();
+    rows.sort(state.sort === 'hot'
+        ? function (a, b) { return b.claimed - a.claimed || a.ago - b.ago; }
+        : function (a, b) { return a.ago - b.ago; });
+
+    var box = document.getElementById('linkList');
+    box.innerHTML = '';
+    if (!rows.length) {
+        box.innerHTML = '<div class="empty">暂无可领取的链接，点右上「我也要分享」投一个吧</div>';
+        return;
+    }
+    rows.forEach(function (row, i) {
+        var el = document.createElement('div');
+        el.className = 'link-row';
+        if (AUTO_DEMO) { el.style.animation = 'none'; }
+        else { el.style.animationDelay = (i * 0.06) + 's'; }
+        el.innerHTML =
+            '<span class="rank">' + String(i + 1).padStart(2, '0') + '</span>' +
+            '<span class="who"><b>' + esc(row.who) + ' ' + esc(row.days) + '</b>' +
+            '<span>' + esc(agoText(row.ago)) + '新 · 已领' + row.claimed + '次</span></span>' +
+            '<button class="get" type="button">领取</button>';
+        el.querySelector('.get').addEventListener('click', function () { openClaim(row, el); });
+        box.appendChild(el);
+    });
+}
+function agoText(min) {
+    if (min < 60) return min + '分钟前';
+    if (min < 60 * 24) return Math.floor(min / 60) + '小时前';
+    return Math.floor(min / 60 / 24) + '天前';
+}
+function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+}
+
+/* ============================================================
+ * 领取流程：弹窗 → 复制链接 / 立即领取（计数实时滚动更新）
+ * ============================================================ */
+var currentClaim = null;
+function openClaim(row, rowEl) {
+    currentClaim = { row: row, rowEl: rowEl };
+    document.getElementById('claimDesc').textContent = row.who + ' ' + row.days + '，链接由网友分享，先到先得';
+    document.getElementById('claimLink').textContent = row.url;
+    document.getElementById('claimDialog').showModal();
+}
+
+function copyText(text, okMsg) {
+    function done() { showToast(okMsg || '已复制'); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text, done); });
+    } else {
+        fallbackCopy(text, done);
+    }
+}
+function fallbackCopy(text, done) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;opacity:0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); done(); } catch (e) { showToast('复制失败，请长按链接手动复制'); }
+    document.body.removeChild(ta);
+}
+
+document.getElementById('claimCopy').addEventListener('click', function () {
+    copyText(document.getElementById('claimLink').textContent, '链接已复制，去浏览器打开领取');
+});
+document.getElementById('claimGo').addEventListener('click', function () {
+    if (!currentClaim) return;
+    document.getElementById('claimDialog').close();
+
+    var row = currentClaim.row;
+    row.claimed += 1;
+    counters.available = Math.max(0, counters.available - 1);
+    counters.claimed += 1;
+
+    // 原地更新该行的「已领 N 次」，不重放入场动画
+    var metaEl = currentClaim.rowEl.querySelector('.who span');
+    if (metaEl) metaEl.textContent = agoText(row.ago) + '新 · 已领' + row.claimed + '次';
+
+    animateNumber(document.getElementById('availableCount'), counters.available);
+    animateNumber(document.getElementById('totalClaimed'), counters.claimed);
+
+    if (row.real) {
+        // 真实领取链接：移动端直接跳转官方收银台；PC 端弹「请使用手机打开」
+        if (isMobile()) {
+            showToast('正在打开网易云音乐领取页…');
+            window.open(row.jump || row.url, '_blank');
+        } else {
+            showPcDialog(row.url);
+        }
+    } else {
+        showToast('演示环境：真实站点将跳转网易云音乐APP');
+    }
+});
+
+/* 移动端判定（原站按 UA 分流：移动端直跳，PC 弹引导弹窗） */
+function isMobile() {
+    return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+}
+
+function showPcDialog(linkText) {
+    document.getElementById('pcLink').textContent = linkText;
+    document.getElementById('pcDialog').showModal();
+}
+document.getElementById('pcCopy').addEventListener('click', function () {
+    copyText(document.getElementById('pcLink').textContent, '链接已复制，发到手机打开即可领取');
+});
+// PC 引导确认后，本会话内不再自动弹出
+document.getElementById('pcDialog').addEventListener('close', function () {
+    try { sessionStorage.setItem('wy_pc_ack', '1'); } catch (e) {}
+});
+
+/* ============================================================
+ * Tab 切换 + 最新/最热排序
+ * ============================================================ */
+document.querySelectorAll('.main-tab').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+        document.querySelectorAll('.main-tab').forEach(function (t) {
+            t.classList.remove('active');
+            t.setAttribute('aria-selected', 'false');
+        });
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+        state.tab = tab.dataset.tab;
+        renderList();
+    });
+});
+document.querySelectorAll('.sort-tab').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+        document.querySelectorAll('.sort-tab').forEach(function (t) { t.classList.remove('active'); });
+        tab.classList.add('active');
+        state.sort = tab.dataset.sort;
+        renderList();
+    });
+});
+
+/* ============================================================
+ * 弹窗开关：分享表单（带校验）/ 规则 / 分享方法 / 点击遮罩关闭
+ * ============================================================ */
+document.getElementById('shareToggle').addEventListener('click', function () {
+    document.getElementById('formMessage').textContent = '';
+    document.getElementById('shareDialog').showModal();
+});
+document.getElementById('rulesToggle').addEventListener('click', function () {
+    document.getElementById('rulesDialog').showModal();
+});
+document.getElementById('guideGo').addEventListener('click', function () {
+    document.getElementById('guideDialog').close();
+    document.getElementById('shareDialog').showModal();
+});
+
+document.getElementById('shareForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var val = document.getElementById('shareContent').value.trim();
+    var msg = document.getElementById('formMessage');
+    if (!/^https?:\/\//i.test(val)) {           // 与原站同款：只接受 http/https 链接
+        msg.classList.remove('ok');
+        msg.textContent = '请粘贴以 http:// 或 https:// 开头的完整链接';
+        return;
+    }
+    msg.classList.add('ok');
+    msg.textContent = '提交成功（演示环境，真实站点会进入审核队列）';
+    setTimeout(function () {
+        document.getElementById('shareDialog').close();
+        document.getElementById('shareContent').value = '';
+        document.getElementById('formMessage').textContent = '';
+        counters.available += 1;
+        animateNumber(document.getElementById('availableCount'), counters.available);
+        showToast('分享成功，感谢投稿！');
+    }, 900);
+});
+
+// 所有 data-close 按钮：关闭所在弹窗
+document.querySelectorAll('[data-close]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+        document.getElementById(btn.dataset.close).close();
+    });
+});
+// 点击 ::backdrop 遮罩关闭
+document.querySelectorAll('dialog').forEach(function (dlg) {
+    dlg.addEventListener('click', function (e) {
+        if (e.target === dlg) dlg.close();
+    });
+});
+// 开关弹窗时锁定页面滚动（与原站 body.dialog-open 一致）
+document.querySelectorAll('dialog').forEach(function (dlg) {
+    dlg.addEventListener('close', syncDialogScroll);
+});
+function syncDialogScroll() {
+    var anyOpen = Array.prototype.some.call(document.querySelectorAll('dialog'), function (d) { return d.open; });
+    document.body.classList.toggle('dialog-open', anyOpen);
+}
+
+/* ============================================================
+ * toast
+ * ============================================================ */
+var toastTimer = 0;
+function showToast(text) {
+    var t = document.getElementById('toast');
+    t.textContent = text;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove('show'); }, 2200);
+}
+
+renderList();
+animateNumber(document.getElementById('availableCount'), counters.available);
+animateNumber(document.getElementById('totalUsers'), counters.users);
+animateNumber(document.getElementById('totalClaimed'), counters.claimed);
+
+/* PC 访问自动引导（原站同款）：非移动端 + 本会话未确认过 → 自动弹「请使用手机打开」 */
+if (!isMobile() && !AUTO_DEMO) {
+    var pcAcked = false;
+    try { pcAcked = !!sessionStorage.getItem('wy_pc_ack'); } catch (e) {}
+    if (!pcAcked) showPcDialog(location.href);
+}
+
+/* 底部：执行自检（Tab/排序点击 + 同步打开弹窗） */
+(function autodemo() {
+    if (!AUTO_DEMO) return;
+    var tab = AUTO_PARAMS.get('tab');
+    if (tab) {
+        var t = document.querySelector('.main-tab[data-tab="' + tab + '"]');
+        if (t) t.click();
+    }
+    var sort = AUTO_PARAMS.get('sort');
+    if (sort) {
+        var s = document.querySelector('.sort-tab[data-sort="' + sort + '"]');
+        if (s) s.click();
+    }
+    var open = AUTO_PARAMS.get('open');
+    if (open) {
+        if (open === 'claim') openClaim(PLATFORMS.netease.rows[0], document.querySelector('.link-row'));
+        else if (open === 'pc') showPcDialog(location.href);
+        else {
+            var d = document.getElementById(open + 'Dialog');
+            if (d) d.showModal();
+        }
+    }
+})();
+</script>
+</body>
+</html>
